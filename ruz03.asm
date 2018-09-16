@@ -9,6 +9,8 @@ section .data
 	plen equ $-prompt
 	output db "Inputs sorted in descending order: "
 	olen equ $-output
+	tester db "hi"
+	tlen equ $-tester
 	newline db 10
 
 section .bss
@@ -25,6 +27,7 @@ section .bss
 	ttens resb 1
 	tones resb 1
 	num3 resb 1
+	temp resb 1
 
 section .text
 
@@ -156,10 +159,90 @@ get_third_number:
 
 	; check for negation before comparing
 	cmp byte [tsign], "-"
-	jne compare_nums
+	jne shortcut
 	neg byte [num3]
 
-compare_nums:
+shortcut:
+
+	; this supposed to order the numbers using less work
+	; if (3 positive inputs) || (3 negative inputs): compare using the usual method
+	; if (1 positive input): move the positive input to the 1st slot, then compare the two negative inputs
+	; if (1 negative input): move the negative input to the last slot, then compare the two positive inputs
+
+	cmp byte [fsign], "+"			
+	je move_first_1st				
+
+	cmp byte [ssign], "+"			
+	je move_second_1st				
+
+	cmp byte [tsign], "+"			
+	je move_third_1st
+
+move_first_1st:							
+
+	mov al, [num1]
+	cmp byte [ssign], "+"
+	je move_second_2nd
+
+	cmp byte [tsign], "+"
+	je move_third_2nd
+
+move_second_1st:
+
+	mov al, [num2]
+	jmp exit
+
+move_third_1st:
+
+	mov al, [num3]
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, "0"
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+move_second_2nd:
+
+	mov bl, [num2]
+	mov cl, [num3]
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+move_third_2nd:
+
+	mov bl, [num3]
+	mov cl, [num2]
+	
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, tester
+	mov edx, tlen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+print_1st_result:
 
 	mov eax, 4
 	mov ebx, 1
