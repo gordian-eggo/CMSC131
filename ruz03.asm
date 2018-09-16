@@ -68,6 +68,13 @@ _start:
 	add byte al, [fones]
 	mov [num1], al
 
+	; check for negation
+	cmp byte [fsign], "-"
+	jne get_second_input
+	neg byte [num1]
+
+get_second_input:
+
 	; get second number
 	mov eax, 4
 	mov ebx, 1
@@ -103,6 +110,13 @@ _start:
 	mul byte bl
 	add byte al, [sones]
 	mov [num2], al
+
+	; check for negation
+	cmp byte [ssign], "-"
+	jne get_third_number
+	neg byte [num2]
+
+get_third_number:
 
 	; get third number
 	mov eax, 4
@@ -140,99 +154,17 @@ _start:
 	add byte al, [tones]
 	mov [num3], al
 
-	; test prints
+	; check for negation before comparing
+	cmp byte [tsign], "-"
+	jne compare_nums
+	neg byte [num3]
 
-	mov al, [num1]
-	mov bl, 10
-	div byte bl
-	mov [ftens], al
-	mov [fones], ah
-
-	add byte [ftens], 30h
-	add byte [fones], 30h
+compare_nums:
 
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, fsign
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, ftens
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, fones
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
-	mov al, [num2]
-	mov bl, 10
-	div byte bl
-	mov [stens], al
-	mov [sones], ah
-
-	add byte [stens], 30h
-	add byte [sones], 30h	
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, ssign
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, stens
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, sones
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
-	mov al, [num3]
-	mov bl, 10
-	div byte bl
-	mov [ttens], al
-	mov [tones], ah
-
-	add byte [ttens], 30h
-	add byte [tones], 30h	
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, tsign
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, ttens
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, tones
-	mov edx, 1
+	mov ecx, output
+	mov edx, olen
 		int 80h
 
 	mov eax, 4
