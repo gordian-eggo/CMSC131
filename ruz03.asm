@@ -27,13 +27,30 @@ section .bss
 	ttens resb 1
 	tones resb 1
 	num3 resb 1
-	temp resb 1
+	g_sign resb 1
+	greatest resb 1
+	m_sign resb 1
+	middle resb 1
+	l_sign resb 1
+	least resb 1
 
 section .text
 
 	global _start
 
 _start:
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, newline
+	mov edx, 1
+		int 80h
 	
 	; get first number
 	mov eax, 4
@@ -121,6 +138,18 @@ get_second_input:
 
 get_third_number:
 
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, newline
+	mov edx, 1
+		int 80h
+
 	; get third number
 	mov eax, 4
 	mov ebx, 1
@@ -158,106 +187,138 @@ get_third_number:
 	mov [num3], al
 
 	; check for negation before comparing
-	cmp byte [tsign], "-"
-	jne shortcut
-	neg byte [num3]
-
-shortcut:
-
-	; this supposed to order the numbers using less work
-	; if (3 positive inputs) || (3 negative inputs): compare using the usual method
-	; if (1 positive input): move the positive input to the 1st slot, then compare the two negative inputs
-	; if (1 negative input): move the negative input to the last slot, then compare the two positive inputs
-
-	cmp byte [fsign], "+"			
-	je move_first_1st				
-
-	cmp byte [ssign], "+"			
-	je move_second_1st				
-
-	cmp byte [tsign], "+"			
-	je move_third_1st
-
-move_first_1st:							
-
-	mov al, [num1]
-	cmp byte [ssign], "+"
-	je move_second_2nd
-
 	cmp byte [tsign], "+"
-	je move_third_2nd
+	je organize
+	jne negate_num3
 
-move_second_1st:
-
-	mov al, [num2]
-	jmp exit
-
-move_third_1st:
-
-	mov al, [num3]
+negate_num3:
 
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, "0"
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
-	jmp exit
-
-move_second_2nd:
-
-	mov bl, [num2]
-	mov cl, [num3]
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
-	jmp exit
-
-move_third_2nd:
-
-	mov bl, [num3]
-	mov cl, [num2]
-	
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, tester
+	mov ebx, tester
 	mov edx, tlen
 		int 80h
 
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, newline
+	mov ebx, newline
 	mov edx, 1
 		int 80h
 
-	jmp exit
+	neg byte [num3]
 
-print_1st_result:
+organize:
 
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, output
-	mov edx, olen
+	mov ebx, tester
+	mov edx, tlen
 		int 80h
 
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, newline
+	mov ebx, newline
 	mov edx, 1
 		int 80h
-
-	jmp exit
-
+;
+;	mov al, [num1]					; compare num1 and num2
+;	cmp al, [num2]
+;	jge move_num1_greatest			; if num1 > num2, move num1 into greatest
+;	jle move_num2_greatest
+;
+;	mov al, [greatest]
+;	cmp al, [num3]
+;	jle move_num3_greatest
+;
+;move_num1_greatest:
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, tester
+;	mov edx, tlen
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, newline
+;	mov edx, 1
+;		int 80h
+;
+;	mov [greatest], al 				; num1 in greatest
+;	mov al, [fsign]					; move num1's sign to g_sign
+;	mov [g_sign], al
+;
+;	mov al, [num2]					; compare num2 and num3
+;	cmp al, [num3]
+;	jge arrange_num2_num3
+;
+;move_num2_greatest:
+	;
+;	mov [num1], al 					; if num1 < num2, mov num2 into greatest
+;	mov al, [num2]
+;	mov [greatest], al
+;
+;move_num3_greatest:
+;
+;	mov al, [greatest] 				; num3 now in greatest
+;	mov [num2], al 
+;
+;	mov al, [num3]
+;	mov [greatest], al
+;
+;arrange_num2_num3:
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, tester
+;	mov edx, tlen
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, newline
+;	mov edx, 1
+;		int 80h
+;
+;	mov [middle], al 				; move num2 to middle
+;	mov al, [ssign] 				; move ssign to m_sign
+;	mov [m_sign], al
+;
+;	mov al, [num3]					; move num3 to least and tsign to l_sign
+;	mov [least], al
+;	mov al, [tsign]
+;	mov [l_sign], al
+;
+;print_organized_results:
+;
+;	; ready greatest for printing
+;	mov al, [greatest]
+;	mov bl, 10
+;	div byte bl
+;	mov [ftens], al
+;	mov [fones], ah
+;
+;	add byte [ftens], 30h
+;	add byte [fones], 30h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, g_sign
+;	mov edx, 1
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, ftens
+;	mov edx, 1
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, fones
+;	mov edx, 1
+;		int 80h	
+	
 exit:
 
 	mov eax, 1
