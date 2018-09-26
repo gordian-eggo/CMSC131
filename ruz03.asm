@@ -9,8 +9,13 @@ section .data
 	plen equ $-prompt
 	output db "Inputs sorted in descending order: "
 	olen equ $-output
+<<<<<<< HEAD
 	comma db ", "
 	clen equ $-comma
+=======
+	tester db "hi"
+	tlen equ $-tester
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 	newline db 10
 
 section .bss
@@ -27,13 +32,37 @@ section .bss
 	ttens resb 1
 	tones resb 1
 	num3 resb 1
+<<<<<<< HEAD
 	temp resb 1
+=======
+	g_sign resb 1
+	greatest resb 1
+	m_sign resb 1
+	middle resb 1
+	l_sign resb 1
+	least resb 1
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 
 section .text
 
 	global _start
 
 _start:
+<<<<<<< HEAD
+=======
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, newline
+	mov edx, 1
+		int 80h
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 	
 	; get first number
 	mov eax, 4
@@ -121,6 +150,21 @@ get_second_input:
 
 get_third_number:
 
+<<<<<<< HEAD
+=======
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, newline
+	mov edx, 1
+		int 80h
+
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 	; get third number
 	mov eax, 4
 	mov ebx, 1
@@ -160,6 +204,7 @@ get_third_number:
 	; check for negation before comparing
 	cmp byte [tsign], "+"
 	je organize
+<<<<<<< HEAD
 	neg byte [num3]
 
 organize:
@@ -316,10 +361,21 @@ print_organized_results:
 	mov ebx, 1
 	mov ecx, ftens
 	mov edx, 1
+=======
+	jne negate_num3
+
+negate_num3:
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 		int 80h
 
 	mov eax, 4
 	mov ebx, 1
+<<<<<<< HEAD
 	mov ecx, fones
 	mov edx, 1
 		int 80h	
@@ -364,10 +420,25 @@ print_organized_results:
 	mov ebx, 1
 	mov ecx, ttens
 	mov edx, 1
+=======
+	mov ebx, newline
+	mov edx, 1
+		int 80h
+
+	neg byte [num3]
+
+organize:
+
+	mov eax, 4
+	mov ebx, 1
+	mov ebx, tester
+	mov edx, tlen
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 		int 80h
 
 	mov eax, 4
 	mov ebx, 1
+<<<<<<< HEAD
 	mov ecx, tones
 	mov edx, 1
 		int 80h
@@ -377,6 +448,109 @@ print_organized_results:
 	mov ecx, newline
 	mov edx, 1
 		int 80h	
+=======
+	mov ebx, newline
+	mov edx, 1
+		int 80h
+;
+;	mov al, [num1]					; compare num1 and num2
+;	cmp al, [num2]
+;	jge move_num1_greatest			; if num1 > num2, move num1 into greatest
+;	jle move_num2_greatest
+;
+;	mov al, [greatest]
+;	cmp al, [num3]
+;	jle move_num3_greatest
+;
+;move_num1_greatest:
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, tester
+;	mov edx, tlen
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, newline
+;	mov edx, 1
+;		int 80h
+;
+;	mov [greatest], al 				; num1 in greatest
+;	mov al, [fsign]					; move num1's sign to g_sign
+;	mov [g_sign], al
+;
+;	mov al, [num2]					; compare num2 and num3
+;	cmp al, [num3]
+;	jge arrange_num2_num3
+;
+;move_num2_greatest:
+	;
+;	mov [num1], al 					; if num1 < num2, mov num2 into greatest
+;	mov al, [num2]
+;	mov [greatest], al
+;
+;move_num3_greatest:
+;
+;	mov al, [greatest] 				; num3 now in greatest
+;	mov [num2], al 
+;
+;	mov al, [num3]
+;	mov [greatest], al
+;
+;arrange_num2_num3:
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, tester
+;	mov edx, tlen
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, newline
+;	mov edx, 1
+;		int 80h
+;
+;	mov [middle], al 				; move num2 to middle
+;	mov al, [ssign] 				; move ssign to m_sign
+;	mov [m_sign], al
+;
+;	mov al, [num3]					; move num3 to least and tsign to l_sign
+;	mov [least], al
+;	mov al, [tsign]
+;	mov [l_sign], al
+;
+;print_organized_results:
+;
+;	; ready greatest for printing
+;	mov al, [greatest]
+;	mov bl, 10
+;	div byte bl
+;	mov [ftens], al
+;	mov [fones], ah
+;
+;	add byte [ftens], 30h
+;	add byte [fones], 30h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, g_sign
+;	mov edx, 1
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, ftens
+;	mov edx, 1
+;		int 80h
+;
+;	mov eax, 4
+;	mov ebx, 1
+;	mov ebx, fones
+;	mov edx, 1
+;		int 80h	
+>>>>>>> 82eac84823891e59f5fe661694a189c71dd5a2f3
 	
 exit:
 
