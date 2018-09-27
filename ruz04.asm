@@ -21,6 +21,8 @@ section .bss
 	m_ten resb 1
 	m_one resb 1
 	m_val resb 1
+	print_n resb 1
+	print_m resb 1
 	d_ten resb 1
 	d_one resb 1
 	divisible resb 1
@@ -90,93 +92,17 @@ _start:
 	add byte al, [m_one]
 	mov [m_val], al
 
-	mov al, [m_val]					; move the value of M into al to serve as a counter later
-	mov [temp], al
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, f_out
-	mov edx, flen
-		int 80h
-
-	mov al, [n_val]
-	mov bl, 10
-	div byte bl
-	mov [n_ten], al
-	mov [n_one], ah
-
-	add byte[n_ten], 30h
-	add byte[n_one], 30h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, n_ten
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, n_one
-	mov edx, 1
-		int 80h
-
-	sub byte [n_ten], 30h
-	sub byte [n_one], 30h
-
-	mov al, [n_ten]
-	mov bl, 10
-	mul byte bl
-	add byte al, [n_one]
-	mov [n_val], al
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, div_by
-	mov edx, dblen
-		int 80h
+	mov al, [n_val]							; copy values int print_n and print_m for printing in the 
+	mov [print_n], al 						; output sentence
 
 	mov al, [m_val]
-	mov bl, 10
-	div byte bl
-	mov [m_ten], al
-	mov [m_one], ah
+	mov [print_m], al
+	mov byte[temp], 0
+	mov ecx, 0
 
-	add byte[m_ten], 30h
-	add byte[m_one], 30h
+	mov ecx, 3
 
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, m_ten
-	mov edx, 1
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, m_one
-	mov edx, 1
-		int 80h
-
-	sub byte [m_ten], 30h
-	sub byte [m_one], 30h
-
-	mov al, [m_ten]
-	mov bl, 10
-	mul byte bl
-	add byte al, [m_one]
-	mov [m_val], al
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, colon
-	mov edx, clen
-		int 80h
-
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
+	; print the output sentence
 
 find_and_print_divisible:
 
@@ -188,16 +114,10 @@ find_and_print_divisible:
 	mov edx, tlen
 		int 80h
 
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, newline
-	mov edx, 1
-		int 80h
-
 	mov ecx, [temp]
 	dec ecx
-	cmp ecx, 0
-	je exit
+;	cmp ecx, 0
+;	je test_print
 	loop find_and_print_divisible
 
 ; test print values
