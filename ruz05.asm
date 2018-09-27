@@ -68,7 +68,7 @@ check_if_prime:											; returns 1 if prime, 0 if otherwise
 	mov ebp, esp
 	sub esp, 6											; reserve space for 3 variables (explained later)
 
-
+	
 
 
 
