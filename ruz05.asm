@@ -15,7 +15,7 @@ section .bss
 
 	n_ten resb 1
 	n_one resb 1
-	n_val resb 1
+	n_val resw 1
 
 section .text
 
@@ -57,24 +57,70 @@ _start:
 
 	push word[n_val]
 
+	call checking_process
+
 exit:
 
 	mov eax, 1
 	mov ebx, 0
 		int 80h
 
-check_if_prime:											; returns 1 if prime, 0 if otherwise
+checking_process:							; where the program will check for prime numbers
 
 	mov ebp, esp
-	sub esp, 6											; reserve space for 3 variables (explained later)
+	sub esp, 8								; reserve space for 4 variables (explained later)
 
+; i (located at [ebp - 2]) = counter, stops when i == n_val
+; divisor (located at [ebp - 4]) = also goes from 2 to n_val, for dividing
+;	> kasi prime numbers are considered prime if they are not divisible by anything other than 1 or itself,
+;     so if it's divisible by any number that isn't equal to itself, it's prime. Save time checking for prime.
+; factor_count (located at [ebp - 6]) = if the value of this is more than 2
+; 				 						the number is not prime and won't be printed
+; temp (located at [ebp - 8]) = basta gagamitin ko to for something
+
+	mov [ebp - 2], 1						; set value of i to 1	
+	mov [ebp - 4], 2						; set value of divisor to 2		
+	mov [ebp - 6], 0						; set factor_count to 0
+	mov [ebp - 8], 0						; set temp to 0 para sure na wala siyang laman
+
+	call check_if_prime
+
+check_if_prime:
+
+	mov ax, [ebp - 2]
+	mov bx, [ebp + 4]
+	cmp ax, bx
+	je exit
 	
+	mov ax, [ebp - 2]						; divide
+	mov bx, [ebp - 4]
+	div word bx
+
+	cmp dx, 0
+	je add_a_factor							; if remainder is 0, increment factor_count
+
+	inc word[ebp - 2]						; increment i and divisor
+	inc word[ebp - 4]
+
+	mov ax, [ebp - 6]
+	cmp ax, 2
+	jne check_if_prime
+	
+	mov [ebp + 6], 1						; returns 1 if the number is prime
 
 
+add_a_factor:
 
-; i = counter, stops when i == n_val
-; divisor = also goes from 1 to n_val, for dividing
-; factor_count = if the value of this is more than 2
-; 				 the number is not prime and won't be printed
+	add word[ebp - 6], 1
 
-;print_number:
+	inc word[ebp - 2]						; increment i and divisor
+	inc word[ebp - 4]
+	jmp check_if_prime
+
+print_number:
+
+	mov ax, [ebp + 6]
+	cmp ax, 1
+	jne check_if_prime
+
+	mov ax, [ebp - ]
