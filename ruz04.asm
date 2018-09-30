@@ -17,8 +17,6 @@ section .data
 	clen equ $-colon
 	space_char db " "
 	sclen equ $-space_char
-	test_text db "hi"
-	tlen equ $-test_text
 	newline db 10
 
 section .bss
@@ -103,9 +101,72 @@ _start:
 	add byte al, [m_one]
 	mov byte[m_val], al
 
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, f_out
+	mov edx, flen
+		int 80h
+
+	add byte[n_ten], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, n_ten
+	mov edx, 1
+		int 80h
+
+	sub byte[n_ten], 30h
+	add byte[n_one], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, n_one
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, div_by
+	mov edx, dblen
+		int 80h
+
+	sub byte[n_one], 30h
+	add byte[m_ten], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, m_ten
+	mov edx, 1
+		int 80h
+
+	sub byte[m_ten], 30h
+	add byte[m_one], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, m_one
+	mov edx, 1
+		int 80h
+
+	sub byte[m_one], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, colon
+	mov edx, clen
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
 	mov byte[iterator], 0
 	mov byte[divisible], 1						; go through N numbers starting from 1
-	mov byte[temp], 1
+	mov byte[temp], 1							; temp is for printing the value because nagaalburuto 
+												; yung printed values if you use the divisible variable 
+												; to print them with
 
 find_and_print_divisible:						; find and print the numbers that are divisible by M
 
@@ -118,18 +179,21 @@ find_and_print_divisible:						; find and print the numbers that are divisible b
 	cmp ah, 0
 	je print_number
 
-	inc byte[iterator]
+	mov al, 0									; moved 0 into ah and al registers para
+	mov ah, 0									; hindi magkaproblema with printing unwanted variables
+
+	inc byte[iterator]							; increment iterator, divisible, and temp
 	inc byte[divisible]
 	inc byte[temp]
 
-	mov al, [iterator]
-	cmp al, [n_val]
-	je exit
+	mov al, [iterator]							; if iterator == n_val:
+	cmp al, [n_val]								;	exit program
+	je exit										; else: loop back through the find_and_print_divisible label
 	jmp find_and_print_divisible
 
 exit:
 
-	mov eax, 4
+	mov eax, 4									; print the newline here para mas maayos
 	mov ebx, 1
 	mov ecx, newline
 	mov edx, 1
@@ -139,11 +203,9 @@ exit:
 	mov ebx, 0
 		int 80h
 
-; test print values
-
 print_number:
 
-	mov al, [temp]
+	mov al, [temp]								; print the divisible number
 	mov bl, 10
 	div byte bl
 	mov [d_ten], al
@@ -170,11 +232,14 @@ print_number:
 	mov edx, 1
 		int 80h
 
-	inc byte[iterator]
+	inc byte[iterator]							; increment iterator, divisible, and temp
 	inc byte[divisible]
 	inc byte[temp]
 
-	mov al, [n_val]
+	mov al, [n_val]								; check if iterator == n_val here too
 	cmp byte[iterator], al
 	jne find_and_print_divisible
 	jmp exit
+
+; BUGS:
+;   > medyo pangit siyang magprint kasi di ko na keri pagandahin yung print na di masisira yung program and gusto ko na magmove on
