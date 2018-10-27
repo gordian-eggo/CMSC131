@@ -36,6 +36,9 @@ section .bss
 	number_array resb 5
 	tens resb 1
 	ones resb 1
+	key resb 1								; for arranging inputs later using insertion sort
+	previous resb 1
+	current resb 1
 
 section .text
 	
@@ -48,7 +51,7 @@ _start:
 	get_input:
 
 		cmp esi, 5
-		je arrange_inputs
+		je reset_esi
 
 		mov eax, 4							; prompt user for a number
 		mov ebx, 1							; then convert the tens and ones digits
@@ -81,9 +84,45 @@ _start:
 		inc esi
 		jmp get_input
 
-	arrange_inputs:
+	reset_esi:
 
-		
+		mov esi, 1									; esi = 1 for insertion sort
+
+	arrange_inputs:									; arrange inputs using insertion sort
+
+		cmp esi, 5
+		je print_array
+
+		mov al, [number_array + esi]				; key = number_array[i]
+		mov [key], al
+		mov al, [number + esi - 1]					; previous = number_array[i-1]
+		mov [previous], al
+
+		insertion_sort_loop:
+
+			cmp byte[previous], 0
+			jle reset_key
+
+			mov al, [key]
+			cmp byte[previous], al
+			jle reset_key
+			jmp move_forward
+
+			move_forward:
+
+				mov al, [previous + 1]
+				mov [previous], al
+
+				mov al, 0
+				mov al, [key]
+
+
+			reset_key:
+
+				mov al, [previous + 1]
+				mov [key], al 
+				in esi 
+				jmp arrange_inputs
 		
 
 exit:
