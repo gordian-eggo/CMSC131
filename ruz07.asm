@@ -33,11 +33,60 @@ section .data
 
 section .bss
 
+	number_array resb 5
+	tens resb 1
+	ones resb 1
+
 section .text
 	
 	global _start
 
 _start:
+
+	mov esi, 0
+
+	get_input:
+
+		cmp esi, 5
+		je arrange_inputs
+
+		mov eax, 4							; prompt user for a number
+		mov ebx, 1							; then convert the tens and ones digits
+		mov ecx, input_prompt
+		mov edx, inp_len
+			int 80h
+
+		mov eax, 3						
+		mov ebx, 0
+		mov ecx, tens
+		mov edx, 1
+			int 80h
+
+		mov eax, 3
+		mov ebx, 0
+		mov ecx, ones
+		mov edx, 2
+			int 80h
+
+		sub byte[tens], 30h
+		sub byte[ones], 30h
+
+		mov al, [tens]
+		mov bl, 10
+		mul byte bl
+		add al, [ones]
+
+		mov [number_array + esi], al
+
+		inc esi
+		jmp get_input
+
+	arrange_inputs:
+
+		
+		
+
+exit:
 
 	mov eax, 1
 	mov ebx, 0
