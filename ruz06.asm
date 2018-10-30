@@ -37,15 +37,36 @@ _start:
 	push given_num					; get the number from the user
 	call get_num
 
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, factor_announcement
-	mov edx, fa_len
-		int 80h
+	mov ax, [given_num]
+	mov bx, 10
+	div word bx
+	mov [given_num], ax
+	mov [current_factor], dx
 
-	; push current_factor
-	; push given_num
-	; call get_factors
+	add word[given_num], 30h
+	add word[current_factor], 30h
+
+	; mov eax, 4
+	; mov ebx, 1
+	; mov ecx, given_num
+	; mov edx, 1
+	; 	int 80h
+
+	; mov eax, 4
+	; mov ebx, 1
+	; mov ecx, current_factor
+	; mov edx, 1
+	; 	int 80h
+
+	; mov eax, 4
+	; mov ebx, 1
+	; mov ecx, newline
+	; mov edx, 1
+	; 	int 80h
+
+	push current_factor
+	push given_num
+	call get_factors
 
 
 exit:
@@ -100,34 +121,51 @@ get_factors:
 
 	sub esp, 4
 
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, factor_announcement
+	mov edx, fa_len
+		int 80h
+
+	xor ax, ax
+	xor dx, dx
+
 	mov word[ebp + 4], 1
 
 	; here I'll loop through the number and if the
 	; value in [ebp - 2] is a factor, that's when
 	; we call print_num
-	; factor_loop:
+	factor_loop:
 
-	; 	mov ax, [ebp + 6]
-	; 	cmp word[ebp + 4], ax
-	; 	je exit
+		mov ax, [ebp + 6]
+		cmp word[ebp + 4], ax
+		je exit
 
 	; 	mov ah, 0
 	; 	mov al, 0
 
 	; 	mov ax, [ebp + 6]
-	; 	mov bx, [ebp + 4]
-	; 	; div word bx
+		mov bx, [ebp + 4]
+		div word bx
 
-	; 	; cmp dx, 0
-	; 	; je print_num
+		cmp dx, 0
+		jne exit
 
-	; 	inc word[ebp + 4]
-	; 	jmp factor_loop
+		inc word[ebp + 4]
+		jmp factor_loop
 
 	add esp, 4
 	ret 4
 
-print_num:
+; print_num:
+
+; 	mov eax, 4
+; 	mov ebx, 1
+; 	mov ecx, comma_and_space
+; 	mov edx, cas_len
+; 		int 80h
+
+	; jmp factor_loop
 
 	; mov ax, [ebp + 4]
 	; mov bx, 10
@@ -154,13 +192,13 @@ print_num:
 	; jmp print_comma
 	; jmp factor_loop
 
-print_comma:
+; print_comma:
 
-	mov eax, 4
-	mov ebx, 1
-	mov ecx, comma_and_space
-	mov edx, cas_len
-		int 80h
+; 	mov eax, 4
+; 	mov ebx, 1
+; 	mov ecx, comma_and_space
+; 	mov edx, cas_len
+; 		int 80h
 
-	inc word[ebp + 4]
-	; jmp factor_loop
+; 	inc word[ebp + 4]
+; 	jmp factor_loop
