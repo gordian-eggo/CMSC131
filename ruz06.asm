@@ -20,7 +20,7 @@ section .data
 section .bss
 
 	given_num resw 1
-	current_factor resw 1
+	; current_factor resw 1
 
 section .text
 
@@ -37,34 +37,6 @@ _start:
 	push given_num					; get the number from the user
 	call get_num
 
-	mov ax, [given_num]
-	mov bx, 10
-	div word bx
-	mov [given_num], ax
-	mov [current_factor], dx
-
-	add word[given_num], 30h
-	add word[current_factor], 30h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, given_num
-	; mov edx, 1
-	; 	int 80h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, current_factor
-	; mov edx, 1
-	; 	int 80h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, newline
-	; mov edx, 1
-	; 	int 80h
-
-	push current_factor
 	push given_num
 	call get_factors
 
@@ -112,14 +84,13 @@ get_num:
 get_factors:
 
 	; STACK LOCATIONS:
-	;	given_num = [ebp + 6]
-	;	current_factor = [ebp + 4]
-	;	*local variables for printing = [ebp - 2], [ebp - 4]
-
-	; * these are test variables
+	;	addr given_num = [ebp + 4]
+	;	local variables for printing = [ebp - 2], [ebp - 4]
+	;	temp variable for the given_num = [ebp - 6]
+	;	temp variable for the factor = [ebp - 8]
 	mov ebp, esp
 
-	sub esp, 4
+	sub esp, 8
 
 	mov eax, 4
 	mov ebx, 1
@@ -127,78 +98,83 @@ get_factors:
 	mov edx, fa_len
 		int 80h
 
-	xor ax, ax
+	xor ax, ax				; clearing the registers
 	xor dx, dx
 
-	mov word[ebp + 4], 1
+	mov word[ebp - 8], 1					; possible factor = 1
 
-	; here I'll loop through the number and if the
-	; value in [ebp - 2] is a factor, that's when
-	; we call print_num
+	mov ebx, [ebp + 4]						; Bug #1, see end of file for details
+	mov ax, [ebx]
+	mov [ebp - 6], ax
+
+	; check divisibility, but only up to 11 because pressed for time
 	factor_loop:
 
-		mov ax, [ebp + 6]
-		cmp word[ebp + 4], ax
-		je exit
+		mov ax, [ebp - 6]
+		cmp word[ebp - 8], ax
+		ja end_function
 
-	; 	mov ah, 0
-	; 	mov al, 0
+		xor ax, ax					; clear registers
+		xor dx, dx
 
-	; 	mov ax, [ebp + 6]
-		mov bx, [ebp + 4]
+		mov bx, [ebp - 8]
 		div word bx
 
-		cmp dx, 0
-		jne exit
+		cmp dx, 0					; if the remainder is 0 then [ebp - 8] is a factor of given_num
+		je print_num
+		jmp continue_factor_loop
 
-		inc word[ebp + 4]
-		jmp factor_loop
+		continue_factor_loop:
 
-	add esp, 4
-	ret 4
+			inc word[ebp - 8]
+			jmp factor_loop
 
-; print_num:
+	end_function:
 
-; 	mov eax, 4
-; 	mov ebx, 1
-; 	mov ecx, comma_and_space
-; 	mov edx, cas_len
-; 		int 80h
+		add esp, 8
 
-	; jmp factor_loop
+		ret 2
 
-	; mov ax, [ebp + 4]
-	; mov bx, 10
-	; div word bx
+print_num:
 
-	; mov word[ebp - 2], ax		; tens
-	; mov word[ebp - 4], dx       ; ones
+	xor ax, ax				; clear registers for printing
+	xor bx, bx
+	
+	mov ax, [ebp - 8]
+	mov bx, 10
+	div word bx
 
-	; add word[ebp - 2], 30h
-	; add word[ebp - 4], 30h
+	mov [ebp - 2], ax
+	mov [ebp - 4], dx
 
-	; mov eax, 4
-	; mov ebx, 1
-	; lea ecx, [ebp - 2]
-	; mov edx, 1
-	; 	int 80h
+	add word[ebp - 2], 30h
+	add word[ebp - 4], 30h
 
-	; mov eax, 4
-	; mov ebx, 1
-	; lea ecx, [ebp - 4]
-	; mov edx, 1
-	; 	int 80h
+	mov eax, 4
+	mov ebx, 1
+	lea ecx, [ebp - 2]
+	mov edx, 1
+		int 80h
 
-	; jmp print_comma
-	; jmp factor_loop
+	mov eax, 4
+	mov ebx, 1
+	lea ecx, [ebp - 4]
+	mov edx, 1
+		int 80h
 
-; print_comma:
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, comma_and_space
+	mov edx, cas_len
+		int 80h
 
-; 	mov eax, 4
-; 	mov ebx, 1
-; 	mov ecx, comma_and_space
-; 	mov edx, cas_len
-; 		int 80h
+	jmp continue_factor_loop
 
-; 	inc word[ebp + 4]
-; 	jmp factor_loop
+; NOTE: the program runs properly but is buggy
+
+; BUG LIST:
+
+;	#1: I'm having trouble moving the value. [ebp + 4] has the address of given_num,
+;		so I'm trying and failing to get at the variable of given_num and put it in [ebp - 6]
+;	#2: Because of the wrong value in [ebp - 6], the print_num function prints *way* more 
+;		values than expected
