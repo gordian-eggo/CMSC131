@@ -34,7 +34,7 @@ section .data
 section .bss
 
 	number_array resb 5
-	sorted_array resb 5
+	choice resb 1
 	current resb 1
 	smallest resb 1
 	tens resb 1
@@ -92,37 +92,10 @@ _start:
 	arrange_inputs:									; arrange inputs using selection sort
 
 		cmp esi, 5
-		je print_array
+		je print_menu
 
 		mov al, [number_array + esi]
 		mov [current], al
-
-		mov al, [current]
-		mov bl, 10
-		div byte bl
-		mov [tens], al
-		mov [ones], ah
-
-		add byte[tens], 30h
-		add byte[ones], 30h
-
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, tens
-		mov edx, 1
-			int 80h
-
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, ones
-		mov edx, 1
-			int 80h
-
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, newline
-		mov edx, 1
-			int 80h
 
 		cmp esi, 0
 		je find_smallest_in_1_to_4
@@ -164,92 +137,17 @@ _start:
 
 				mov bl, [smallest]
 				mov [smallest], al
-				; mov [current], bl
-
-				mov [number_array + esi], bl
 				mov [current], bl
-
-				mov al, [number_array + esi]
-				mov [current], al
-
-				mov al, [current]
-				mov bl, 10
-				div byte bl
-				mov [tens], al
-				mov [ones], ah
-
-				add byte[tens], 30h
-				add byte[ones], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, ones
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
 
 				inc edi
 				jmp find_smallest_in_1_to_4
 
 			continue_smallest_search:
 
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, first_choice
-				mov edx, fc_len
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
-				mov [tens], edi
-				add byte[tens], 30h
-	
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-	
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
 				inc edi
 				jmp find_smallest_in_1_to_4
 
 		leave_loop:
-
-			mov [tens], esi
-			add byte[tens], 30h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, tens
-			mov edx, 1
-				int 80h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, newline
-			mov edx, 1
-				int 80h
 
 			mov al, [current]
 			mov [number_array + esi], al
@@ -284,87 +182,15 @@ _start:
 				mov [number_array + esi], bl
 				mov [current], bl
 
-				mov al, [number_array + esi]
-				mov [current], al
-
-				mov al, [current]
-				mov bl, 10
-				div byte bl
-				mov [tens], al
-				mov [ones], ah
-
-				add byte[tens], 30h
-				add byte[ones], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, ones
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
 				inc edi
 				jmp find_smallest_in_2_to_4
 
 			continue_smallest_search_2:
 
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, second_choice
-				mov edx, sc_len
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
-				mov [tens], edi
-				add byte[tens], 30h
-	
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-	
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
 				inc edi
 				jmp find_smallest_in_2_to_4
 
 		leave_loop_2:
-
-			mov [tens], esi
-			add byte[tens], 30h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, tens
-			mov edx, 1
-				int 80h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, newline
-			mov edx, 1
-				int 80h
 
 			mov al, [current]
 			mov [number_array + esi], al
@@ -397,36 +223,6 @@ _start:
 
 				mov [number_array + esi], bl
 				mov [current], bl
-
-				mov al, [number_array + esi]
-				mov [current], al
-
-				mov al, [current]
-				mov bl, 10
-				div byte bl
-				mov [tens], al
-				mov [ones], ah
-
-				add byte[tens], 30h
-				add byte[ones], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, ones
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
 
 				inc edi
 				jmp find_smallest_in_3_to_4
@@ -465,21 +261,6 @@ _start:
 
 		leave_loop_3:
 
-			mov [tens], esi
-			add byte[tens], 30h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, tens
-			mov edx, 1
-				int 80h
-
-			mov eax, 4
-			mov ebx, 1
-			mov ecx, newline
-			mov edx, 1
-				int 80h
-
 			mov al, [current]
 			mov [number_array + esi], al
 
@@ -501,84 +282,9 @@ _start:
 				mov [number_array + 3], bl
 				mov [number_array + 4], al
 
-				mov al, [number_array + 3]
-				mov [current], al
-
-				mov al, [current]
-				mov bl, 10
-				div byte bl
-				mov [tens], al
-				mov [ones], ah
-
-				add byte[tens], 30h
-				add byte[ones], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, ones
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
-				mov al, [number_array + 4]
-				mov [current], al
-
-				mov al, [current]
-				mov bl, 10
-				div byte bl
-				mov [tens], al
-				mov [ones], ah
-
-				add byte[tens], 30h
-				add byte[ones], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, ones
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
-
 				jmp finish_loop
 
 			finish_loop:
-
-				mov [tens], esi
-				add byte[tens], 30h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, tens
-				mov edx, 1
-					int 80h
-
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, newline
-				mov edx, 1
-					int 80h
 
 				inc esi
 				jmp arrange_inputs
@@ -589,42 +295,215 @@ exit:
 	mov ebx, 0
 		int 80h
 
-print_array:
+print_menu:					; prints the menu
 
-	mov esi, 0
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, menu_bar
+	mov edx, mb_len
+		int 80h
 
-	print_loop:
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
 
-		cmp esi, 5
-		je exit
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, first_choice
+	mov edx, fc_len
+		int 80h
 
-		mov al, [number_array + esi]
-		mov bl, 10
-		div byte bl
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
 
-		mov [tens], al
-		mov [ones], ah
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, second_choice
+	mov edx, sc_len
+		int 80h
 
-		add byte[tens], 30h
-		add byte[ones], 30h
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
 
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, tens
-		mov edx, 1
-			int 80h
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, third_choice
+	mov edx, tc_len
+		int 80h
 
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, ones
-		mov edx, 1
-			int 80h
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
 
-		mov eax, 4
-		mov ebx, 1
-		mov ecx, newline
-		mov edx, 1
-			int 80h
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, exit_choice
+	mov edx, ec_len
+		int 80h
 
-		inc esi
-		jmp print_loop
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	mov eax, 4				; let the user pick which output they want to get 
+	mov ebx, 1
+	mov ecx, choice_prompt
+	mov edx, cp_len
+		int 80h
+
+	mov eax, 3
+	mov ebx, 0
+	mov ecx, choice
+	mov edx, 2
+		int 80h
+
+	sub byte[choice], 30h
+
+	mov al, [choice]
+	cmp al, 1
+	jmp give_max
+
+	cmp al, 2
+	jmp give_min
+
+	cmp al, 3
+	jmp give_med
+
+	cmp al, 4
+	jmp exit
+
+give_min:			; return the smallest element in the array 
+
+	mov al, [number_array + 0]		; get the first element of the array
+	mov bl, 10
+	div byte bl
+
+	mov [tens], al
+	mov [ones], bl
+
+	add byte[tens], 30h
+	add byte[ones], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, min_output
+	mov edx, mino_len
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, tens
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, ones
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+give_max:				; returns the biggest element of the array 
+
+	mov al, [number_array + 4]		; get the first element of the array
+	mov bl, 10
+	div byte bl
+
+	mov [tens], al
+	mov [ones], bl
+
+	add byte[tens], 30h
+	add byte[ones], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, max_output
+	mov edx, maxo_len
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, tens
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, ones
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+give_med:			; returns the middle element of the array
+					; like the actual middle element
+
+	mov al, [number_array + 2]		; get the first element of the array
+	mov bl, 10
+	div byte bl
+
+	mov [tens], al
+	mov [ones], bl
+
+	add byte[tens], 30h
+	add byte[ones], 30h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, med_output
+	mov edx, medo_len
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, tens
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, ones
+	mov edx, 1
+		int 80h
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
+
+	jmp exit
+
+; NOTE: the program is functional but doesn't run properly.
+; BUG LIST:
+
+;	1) not entirely sure if selection sort is working because the array gets repopulated 
+;	   by the lowest value, e.g. if the lowest value is 01, you get an array with 5 01s in it
+
+;	2) the functions get_max, get_min, and get_med are not printing the correct output. 
+;	   Haven't found the cause yet.
