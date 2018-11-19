@@ -146,13 +146,13 @@ binarize:
 		mov dx, [ones]			; move the values in ones into dx then move into [ebp + 6]
 		mov word[ebp + 6], dx
 
-		; mov byte[tens], al 	; mov al into tens, then move tens into ax
-		; mov ax, [tens]		; then push ax to the stack
-		; push ax
+		mov byte[decim_num], al 	; mov al into decim_num, then move decim_num into ax
+		mov ax, [decim_num]		; then push ax to the stack
+		push ax
 		call binarize
 
 		pop ax
-		
+
 		mov ebp, esp			; readjust location of base pointer
 		add word[ebp + 6], 30h
 
