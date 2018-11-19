@@ -139,8 +139,15 @@ binarize:
 		mov ax, [ebp + 4]
 		mov bl, 2
 		div byte bl
-		mov word[ebp + 6], ax
-		push ax
+		; mov word[ebp + 6], ax
+		; push ax
+		mov byte[ones], ah		; move ah into ones variable
+		mov dx, [ones]			; move the values in ones into dx then move into ebp + 6
+		mov word[ebp + 6], dx
+
+		; mov byte[tens], al
+		; mov ax, [tens]
+		; push ax
 		call binarize
 
 		pop ax
