@@ -108,7 +108,7 @@ binarize:
 
 		if_zero:
 
-			mov word[ebp + 6], 0
+			mov word[ebp + 6], 0				; if the final value of [ebp + 4] is 0, print 0
 			add word[ebp + 6], 30h
 
 			mov eax, 4
@@ -121,7 +121,7 @@ binarize:
 
 		if_one:
 
-			mov word[ebp + 6], 1
+			mov word[ebp + 6], 1				; if the final value of [ebp + 4] is 1, print 1
 			add word[ebp + 6], 30h
 
 			mov eax, 4
@@ -139,22 +139,24 @@ binarize:
 		mov ax, [ebp + 4]
 		mov bl, 2
 		div byte bl
+		; commented these out for now
 		; mov word[ebp + 6], ax
 		; push ax
 		mov byte[ones], ah		; move ah into ones variable
-		mov dx, [ones]			; move the values in ones into dx then move into ebp + 6
+		mov dx, [ones]			; move the values in ones into dx then move into [ebp + 6]
 		mov word[ebp + 6], dx
 
-		; mov byte[tens], al
-		; mov ax, [tens]
+		; mov byte[tens], al 	; mov al into tens, then move tens into ax
+		; mov ax, [tens]		; then push ax to the stack
 		; push ax
 		call binarize
 
 		pop ax
+		
 		mov ebp, esp			; readjust location of base pointer
 		add word[ebp + 6], 30h
 
-		mov eax, 4
+		mov eax, 4				; print the value of the remainder in [ebp + 6]
 		mov ebx, 1
 		lea ecx, [ebp + 6]
 		mov edx, 1
