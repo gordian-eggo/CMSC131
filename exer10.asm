@@ -1,8 +1,8 @@
 ; RUZ, Julianne Marie
 ; 2014-04280
 ; CMSC 131 AB-2L
-; Program description: This program uses recursion to convert decimal numbers into 
-;					   binary numbers.
+; Program description: This program uses recursion to convert decimal numbers from 0-255 
+;					   into binary numbers.
 
 section .data
 	newline db 10
@@ -139,15 +139,13 @@ binarize:
 		mov ax, [ebp + 4]
 		mov bl, 2
 		div byte bl
-		; commented these out for now
-		; mov word[ebp + 6], ax
-		; push ax
+
 		mov byte[ones], ah		; move ah into ones variable
 		mov dx, [ones]			; move the values in ones into dx then move into [ebp + 6]
 		mov word[ebp + 6], dx
 
 		mov byte[decim_num], al 	; mov al into decim_num, then move decim_num into ax
-		mov ax, [decim_num]		; then push ax to the stack
+		mov ax, [decim_num]			; then push ax to the stack
 		push ax
 		call binarize
 
