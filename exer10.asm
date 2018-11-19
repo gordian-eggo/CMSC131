@@ -79,51 +79,13 @@ _start:
 	push word[decim_num]
 	call binarize
 
- ;    xor ax, ax
-
-	; mov al, [decim_num]	
-	; mov bl, 100
-	; div byte bl
-	; mov [hundreds], al
-	; mov [decim_num], ah
-
-	; xor ax, ax
-
-	; mov al, [decim_num]
-	; mov bl, 10
-	; div byte bl
-	; mov [tens], al
-	; mov [ones], ah
-
-	; add byte[hundreds], 30h
-	; add byte[tens], 30h
-	; add byte[ones], 30h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, hundreds
-	; mov edx, 1
-	; 	int 80h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, tens
-	; mov edx, 1
-	; 	int 80h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, ones
-	; mov edx, 1
-	; int 80h
-
-	; mov eax, 4
-	; mov ebx, 1
-	; mov ecx, newline
-	; mov edx, 1
-	; 	int 80h
-
 exit:
+
+	mov eax, 4
+	mov ebx, 1
+	mov ecx, newline
+	mov edx, 1
+		int 80h
 
 	mov eax, 1
 	mov ebx, 0
@@ -132,43 +94,64 @@ exit:
 binarize:
 
 	mov ebp, esp
+
 	cmp word[ebp + 4], 1
 	jg recall_binarize
 
-	; base_case:
+	base_case:
 
-	; 	mov word[ebp + 6], 1
-	; 	add word[ebp + 6], 30h
+		cmp word[ebp + 4], 0
+		je if_zero
 
-	; 	mov eax, 4
-	; 	mov ebx, 1
-	; 	lea ecx, [ebp + 6]
-	; 	mov edx, 1
-	; 		int 80h
+		cmp word[ebp + 4], 1
+		je if_one
 
-	; 	jmp leave
+		if_zero:
 
+			mov word[ebp + 6], 0
+			add word[ebp + 6], 30h
+
+			mov eax, 4
+			mov ebx, 1
+			lea ecx, [ebp + 6]
+			mov edx, 1
+				int 80h
+
+			jmp leave
+
+		if_one:
+
+			mov word[ebp + 6], 1
+			add word[ebp + 6], 30h
+
+			mov eax, 4
+			mov ebx, 1
+			lea ecx, [ebp + 6]
+			mov edx, 1
+				int 80h
+
+			jmp leave
 
 	recall_binarize:
 
-		; sub esp, 2
+		sub esp, 2
+
 		mov ax, [ebp + 4]
-		mov bx, 2
-		div word bx
-		; jmp leave
-		; mov word[ebp + 6], dx
-		; push ax
-		; call binarize
+		mov bl, 2
+		div byte bl
+		mov word[ebp + 6], ax
+		push ax
+		call binarize
 
-		; pop ax
-		; mov ebp, esp			; readjust location of base pointer
-		; add word[ebp + 6], 30h
+		pop ax
+		mov ebp, esp			; readjust location of base pointer
+		add word[ebp + 6], 30h
 
-		; mov eax, 4
-		; mov ebx, 1
-		; lea ecx, [ebp + 6]
-		; mov edx, 1
-		; 	int 80h
+		mov eax, 4
+		mov ebx, 1
+		lea ecx, [ebp + 6]
+		mov edx, 1
+			int 80h
 
 	leave: 
 
